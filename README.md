@@ -65,8 +65,8 @@ A modern, responsive web application for managing student records with a beautif
 
 1. **Clone the Repository**
    ```bash
-   git clone [repository-url]
-   cd student-management-system
+   git clone https://github.com/wing2rah/hetcstudents
+   cd hetcstudents
    ```
 
 2. **Configure Supabase**
