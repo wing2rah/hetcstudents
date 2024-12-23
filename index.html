@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIM Port Details</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+       :root {
+    --primary-color: #ff758c;
+    --primary-dark: #4f46e5;
+    --secondary-color: #f8fafc;
+    --text-color: #1e293b;
+    --border-radius: 12px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Animations */
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0px); }
+}
+
+/* Main Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    padding: 20px;
+    color: var(--text-color);
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* Form Container Styles */
+.form-container {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.form-container h2 {
+    color: var(--primary-dark);
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+/* Input Group Styles */
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 0.95rem;
+    text-transform: capitalize;
+}
+
+input, select {
+    width: 100%;
+    padding: 0.875rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Button Styles */
+.button-group {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+button {
+    padding: 1rem;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-add {
+    background: linear-gradient(135deg, #6366f1, #ec4899);
+    color: white;
+}
+
+.btn-fetch {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+}
+
+.btn-delete {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+}
+
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Data Container and Cards */
+.data-container {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.data-container h3 {
+    color: var(--primary-dark);
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.student-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.student-card:hover {
+    transform: translateY(-5px) scale(1.01);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    background: linear-gradient(135deg, #6366f1, #ec4899);
+    color: white;
+    padding: 1.5rem;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.info-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.info-item {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.info-item strong {
+    color: var(--primary-dark);
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+/* Status Grid */
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.status-item {
+    text-align: center;
+    padding: 1rem;
+    background: rgba(249, 250, 251, 0.8);
+    border-radius: 12px;
+    transition: transform 0.2s ease;
+}
+
+.status-item:hover {
+    transform: translateY(-2px);
+}
+
+.status-green strong {
+    color: #059669;
+}
+
+.status-red strong {
+    color: #dc2626;
+}
+
+/* Delete Modal Styles */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    position: relative;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-10%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal h3 {
+    color: #ef4444;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.modal p {
+    color: #4b5563;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    text-align: center;
+}
+
+.modal input {
+    margin-bottom: 1.5rem;
+}
+
+.modal-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.btn-cancel {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.btn-confirm-delete {
+    background: #ef4444;
+    color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .button-group {
+        grid-template-columns: 1fr;
+    }
+
+    .info-group {
+        grid-template-columns: 1fr;
+    }
+
+    .status-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-container,
+    .data-container,
+    .modal {
+        padding: 1.5rem;
+    }
+
+    input,
+    select,
+    button {
+        padding: 0.875rem;
+    }
+}
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h2>student details</h2>
+            <form id="dataForm">
+                <div class="input-group">
+                    <label for="classnumber">class roll number</label>
+                    <input type="text" id="class_number" name="classnumber" placeholder="Enter class roll  number"
+                        required>
+                </div>
+                <div class="input-group">
+                    <label for="name">name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter name" required>
+                </div>
+                <div class="input-group">
+                    <label for="u_roll_no">university roll number</label>
+                    <input type="text" id="u_roll_no" name="u_roll_no" placeholder="Enter university roll number"
+                        required>
+                </div>
+                <div class="input-group">
+                    <label for="u_reg_no">university registration number</label>
+                    <input type="text" id="u_reg_no" name="u_reg_no" placeholder="Enter university registration number"
+                        required>
+                </div>
+                <div class="input-group">
+                    <label for="phonenumber">Phone Number</label>
+                    <input type="text" id="phonenumber" name="phonenumber" placeholder="Enter phone number" required>
+                </div>
+                <div class="input-group">
+                    <label for="email">email</label>
+                    <input type="text" id="email" name="email" placeholder="Enter email" required>
+
+                </div>
+                <div class="input-group">
+                    <label for="fathername">father's name</label>
+                    <input type="text" id="fathername" name="fathername" placeholder="Enter father's name" required>
+                </div>
+                <div class="input-group">
+                    <label for="father_number">father's phone number</label>
+                    <input type="text" id="father_number" name="father_number" placeholder="Enter father's phone number"
+                        required>
+                </div>
+
+                <div class="input-group">
+                    <label for="fees">fees</label>
+                    <select id="fees" name="fees" required>
+                        <option value="" disabled selected>Select </option>
+                        <option value="paid">paid</option>
+                        <option value="unpaid">unpaid</option>
+
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="attend">attendance</label>
+                    <select id="attend" name="attend" required>
+                        <option value="" disabled selected>Select </option>
+                        <option value="above 50%">above 50%</option>
+                        <option value="above 75%">above 75%</option>
+                        <option value="above 90%">above 90%</option>
+                        <option value="100%">100%</option>
+
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="backlogs">backlogs</label>
+                    <select id="backlogs" name="backlogs" required>
+                        <option value="" disabled selected>Select provider</option>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
+                <div class="button-group">
+                    <button type="button" onclick="addData()" class="btn-add">Add</button>
+                    <button type="button" onclick="fetchData()" class="btn-fetch">Fetch</button>
+                    <button type="button" onclick="deleteData()" class="btn-delete">Delete</button>
+                </div>
+            </form>
+        </div>
+        <div class="modal-overlay" id="deleteModal">
+            <div class="modal">
+                <h3>Delete Student Record</h3>
+                <p>Please enter the university roll number of the student you want to delete. This action cannot be undone.</p>
+                <input type="text" id="deleteRollNo" placeholder="Enter university roll number" class="delete-input">
+                <div class="modal-buttons">
+                    <button class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+                    <button class="btn-confirm-delete" onclick="confirmDelete()">Delete</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="data-container">
+            <h3>Records</h3>
+
+            <ul id="dataList"></ul>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://iypxhfjaxfdxfoubnefm.supabase.co';
+        const SUPABASE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5cHhoZmpheGZkeGZvdWJuZWZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ1NzQwOTksImV4cCI6MjA1MDE1MDA5OX0.3tJFpY7Xth-NGA55hcqCTDnL8bHZbxKsiSBHP6pZihM';
+        const { createClient } = supabase;
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_API_KEY);
+
+        async function addData() {
+            const formData = new FormData(document.getElementById('dataForm'));
+            const data = {
+                class_roll: formData.get('classnumber'),
+                name: formData.get('name'),
+                u_roll_no: formData.get('u_roll_no'),
+                u_reg_no: formData.get('u_reg_no'),
+                phone: formData.get('phonenumber'),
+                email: formData.get('email'),
+                father_name: formData.get('fathername'),
+                father_number: formData.get('father_number'),
+                fees: formData.get('fees'),
+                attendance: formData.get('attend'),
+                backlog: formData.get('backlogs')
+            };
+            let { error } = await _supabase
+                .from('students')
+                .insert([data]);
+            if (error) {
+                alert('Error: ' + error.message);
+            } else {
+                alert('Data added successfully!');
+                document.getElementById('dataForm').reset();
+            }
+        }
+
+        async function fetchData() {
+            let { data, error } = await _supabase
+                .from('students')
+                .select('*');
+            if (error) {
+                alert('Error: ' + error.message);
+            } else {
+                const dataList = document.getElementById('dataList');
+                dataList.innerHTML = '';
+                data.forEach(student => {
+                    const card = document.createElement('div');
+                    card.className = 'student-card';
+                    card.innerHTML = `
+                <div class="card-header">
+                    <h3>${student.name}</h3>
+                    <p>Class Roll: ${student.class_roll}</p>
+                </div>
+                <div class="card-body">
+                    <div class="info-group">
+                        <div class="info-item">
+                            <strong>University Roll:</strong>
+                            <span>${student.u_roll_no}</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Registration:</strong>
+                            <span>${student.u_reg_no}</span>
+                        </div>
+                    </div>
+                    <div class="contact-info">
+                        <p><strong>Phone:</strong> ${student.phone}</p>
+                        <p><strong>Email:</strong> ${student.email}</p>
+                        <p><strong>Father:</strong> ${student.father_name} (${student.father_number})</p>
+                    </div>
+                    <div class="status-grid">
+                        <div class="status-item ${student.fees === 'paid' ? 'status-green' : 'status-red'}">
+                            <span>Fees</span>
+                            <strong>${student.fees}</strong>
+                        </div>
+                        <div class="status-item">
+                            <span>Attendance</span>
+                            <strong>${student.attendance}</strong>
+                        </div>
+                        <div class="status-item">
+                            <span>Backlogs</span>
+                            <strong>${student.backlog}</strong>
+                        </div>
+                    </div>
+                </div>
+            `;
+                    dataList.appendChild(card);
+                });
+            }
+        }
+
+        function showDeleteModal() {
+        document.getElementById('deleteModal').style.display = 'flex';
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').style.display = 'none';
+        document.getElementById('deleteRollNo').value = '';
+    }
+
+    async function confirmDelete() {
+        const rollNo = document.getElementById('deleteRollNo').value.trim();
+        
+        if (!rollNo) {
+            alert('Please enter a university roll number');
+            return;
+        }
+
+        try {
+            let { data, error } = await _supabase
+                .from('students')
+                .delete()
+                .eq('u_roll_no', rollNo);
+
+            if (error) {
+                alert('Error: ' + error.message);
+            } else {
+                alert('Student record deleted successfully!');
+                closeDeleteModal();
+                fetchData(); // Refresh the display
+            }
+        } catch (err) {
+            alert('Error: ' + err.message);
+        }
+    }
+
+    // Update the original deleteData function to show the modal instead
+    function deleteData() {
+        showDeleteModal();
+    }
+    </script>
+</body>
+
+</html>
